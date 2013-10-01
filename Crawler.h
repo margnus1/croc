@@ -7,6 +7,8 @@
 class Crawler
 {
  public:
+  int finalScore;
+
   Crawler (CrocSession *crocSession) : server (crocSession) {
     srand(time(NULL));
   }

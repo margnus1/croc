@@ -4,8 +4,20 @@
 
 int main() {
   bool noob = false;
-  CrocSession s(L"Group 2", noob);
+  CrocSession s(L"Group 2", noob); 
+  const int numberOfGames = 100;
+
   Crawler crawler(&s);
-  crawler.play();
-  std::cout << "Hello World" << std::endl;
-}
+
+  for(int i=0; i< numberOfGames; i++)
+    {
+      crawler.play();
+      std::cout << "Game number: " << i+1 << "  \tScore: " << crawler.finalScore << std::endl;      
+    }
+     
+  s.PostResults();                                                                    
+  std::cout << "Number of games played: " << s.getPlayed() << std::endl;              
+  std::cout << "Avarage score: " << s.getAverage() << std::endl;                      
+}                                                                                   
+
+
