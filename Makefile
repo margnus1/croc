@@ -1,16 +1,17 @@
-TARGET  := crocofinder
-SRCS    := CrocGame.cpp Crawler.cpp main.cpp 
-OBJS    := ${SRCS:.cpp=.o} 
+TARGET   := crocofinder
+SRCS     := CrocGame.cpp Crawler.cpp main.cpp
+OBJS     := ${SRCS:.cpp=.o}
 
-CXX	:= clang++
+CXX	 := g++
+CXXFLAGS := -std=c++11
 
 all: ${TARGET}
 
 ${TARGET}: ${OBJS}
-	${CXX} -o $@ $^
+	${CXX} ${CXXFLAGS} -o $@ $^
 
 ${OBJS}: %.o: %.cpp
-	${CXX} -c -o $@ $<
+	${CXX} ${CXXFLAGS} -c -o $@ $<
 
 clean:
 	rm -rfv ${OBJS} ${TARGET} *~ \#*\#
