@@ -1,6 +1,6 @@
 #include "CrocGame.h"
 #include <iostream>
-#include "Crawler.cpp"
+#include "Crawler.h"
 
 int main() {
   bool noob = false;
