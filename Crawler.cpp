@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include "ToString.h"
 
 void Crawler::play()
 {
@@ -26,7 +27,7 @@ void Crawler::play()
 	else
 	  {
 	    int size=paths[playerLocation-1].size();
-	    action1 = std::to_wstring((long long)paths[playerLocation-1][rand()%size]);
+	    action1 = ToString((long long)paths[playerLocation-1][rand()%size]);
 	  }
 	action2='S';
       } while(server->makeMove(action1, action2, finalScore));

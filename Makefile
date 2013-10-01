@@ -1,5 +1,5 @@
 TARGET  := crocofinder
-SRCS    := CrocGame.cpp Crawler.cpp main.cpp 
+SRCS    := ToString.cpp CrocGame.cpp Crawler.cpp main.cpp 
 OBJS    := ${SRCS:.cpp=.o} 
 
 CXX	:= clang++
