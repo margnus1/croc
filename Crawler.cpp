@@ -25,8 +25,8 @@ void Crawler::play()
 	  action1='S';
 	else
 	  {
-	    int size=paths[playerLocation].size();
-	    action1=paths[playerLocation][rand()%size]-1;
+	    int size=paths[playerLocation-1].size();
+	    action1 = std::to_wstring((long long)paths[playerLocation-1][rand()%size]);
 	  }
 	action2='S';
       } while(server->makeMove(action1, action2, finalScore));
