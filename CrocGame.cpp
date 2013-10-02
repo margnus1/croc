@@ -5,6 +5,7 @@
 #include <time.h>
 #include <sstream>
 #include <iomanip>
+#include <unistd.h>
 
 class http_pImple {};
 
