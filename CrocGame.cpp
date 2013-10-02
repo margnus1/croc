@@ -21,7 +21,7 @@ public:
     : waterholes(GRAPH_SIZE),
       finished(false)
   {
-    //    generator.seed(std::chrono::system_clock::now().time_since_epoch().count());
+    generator.seed(std::chrono::system_clock::now().time_since_epoch().count());
     std::uniform_real_distribution<double> mean(1.0, 3.0),
       deviation(0.1, 2.0);
     for (int n = 0; n < int(graph.size()); n++) {
@@ -48,11 +48,14 @@ public:
 
   void randomWalk(int &entity_position) {
     assert(entity_position > 0 && entity_position <= GRAPH_SIZE);
-    std::uniform_int_distribution<int> dist(0, graph[entity_position - 1].size() - 1);
-    entity_position = graph[entity_position - 1][dist(generator)];
+    std::uniform_int_distribution<uint> dist(0, graph[entity_position - 1].size());
+    uint transition = dist(generator);
+    if (transition == graph[entity_position - 1].size());
+    else entity_position = graph[entity_position - 1][transition];
   }
 
   void playerMove(std::wstring move) {
+    if (!finished) score++;
     if (move == L"S") {
       if (playerLocation == crocLocation) finished = true;
     } else {
@@ -88,6 +91,7 @@ public:
   std::vector<Waterhole> waterholes;
 
   bool finished = false;
+  int score = 0;
   int crocLocation;
   int playerLocation;
   int backpacker1Activity, backpacker2Activity;
@@ -141,14 +145,19 @@ CrocSession::~CrocSession() {
   if (Game != nullptr) delete Game;
 };
 
-int CrocSession::getPlayed() const { return 0; };
+int CrocSession::getPlayed() const { return total; };
 
 //  Get your session statistics
 //  -   You are ranked on your average, and lower is better.
-double CrocSession::getAverage () const { return 0.0; };
+double CrocSession::getAverage () const {
+  return (double)score / (double) total;
+};
 
 //  Clear the session statistics
-void CrocSession::ClearRecord() {};
+void CrocSession::ClearRecord() {
+  score = 0;
+  total = 0;
+};
 
 //  Submit session statistics to the server
 //  -   Requires that you have played at least 100 games.
@@ -159,8 +168,9 @@ void CrocSession::PostResults() const {};
 void CrocSession::StartGame () {
   assert(Game == nullptr || Game->finished);
   if (Game != nullptr) delete Game;
+  else { score = 0; total = 0; }
   Game = new CrocGame();
-  score = 0;
+  total++;
 };
 
 //  Get Paths
@@ -181,10 +191,12 @@ bool CrocSession::makeMove (const std::wstring& playerMove,
                             const std::wstring& playerMove2,
                             int& outScore) {
   assert(Game != nullptr);
+  if (Game->finished) return false;
   Game->playerMove(playerMove);
   Game->playerMove(playerMove2);
   Game->tick();
-  outScore = ++score;
+  outScore = Game->score;
+  if (Game->finished) score += Game->score;
   return !Game->finished;
 };
 
@@ -200,7 +212,7 @@ void CrocSession::GetGameState (int& score,
                                 double& salineReading,
                                 double& alkalinityReading) const {
   assert(Game != nullptr);
-  score = this->score;
+  score = Game->score;
   playerLocation = Game->playerLocation;
   backpacker1Activity = Game->backpacker1Activity;
   backpacker2Activity = Game->backpacker2Activity;
