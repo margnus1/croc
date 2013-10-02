@@ -1,8 +1,8 @@
 #include "CrocGame.h"
 #include <cassert>
 #include <random>
-#include <chrono>
 #include <iostream>
+#include <time.h>
 
 class http_pImple {};
 
@@ -21,9 +21,13 @@ public:
     : waterholes(GRAPH_SIZE),
       finished(false)
   {
-    generator.seed(std::chrono::system_clock::now().time_since_epoch().count());
-    std::uniform_real_distribution<double> mean(1.0, 3.0),
-      deviation(0.1, 2.0);
+    // Fetch as exact time as possible, and use as seed
+    timespec time;
+    clock_gettime(CLOCK_REALTIME, &time);
+    generator.seed(time.tv_sec ^ time.tv_nsec);
+
+    std::uniform_int_distribution<int> mean     (1100, 1200),
+                                       deviation(25,   50);
     for (int n = 0; n < int(graph.size()); n++) {
       waterholes[n].calciumDistribution    = std::normal_distribution<double>(mean(generator), deviation(generator));
       waterholes[n].salinityDistribution   = std::normal_distribution<double>(mean(generator), deviation(generator));
@@ -65,8 +69,9 @@ public:
       for (int i = 0; i < int(graph[playerLocation - 1].size()); i++)
         if (graph[playerLocation - 1][i] == neighbor) isNeighbor = true;
       if (isNeighbor) playerLocation = neighbor;
-      else std::cerr << "Warning: Ignoring attempted move from " << playerLocation
-                     << " to " << neighbor << std::endl;
+      else if (neighbor != playerLocation)
+        std::cerr << "Warning: Ignoring attempted move from " << playerLocation
+                  << " to " << neighbor << std::endl;
     }
   }
 

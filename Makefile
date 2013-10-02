@@ -12,13 +12,14 @@ ODIR		:= obj
 _OBJS		:= ${SRCS:.cpp=.o}
 OBJS		:= $(patsubst %,$(ODIR)/%,$(_OBJS))
 TMPS		:= *~ \#*\#
-CXX	        := g++
+CXX	        := clang++
 CXXFLAGS    	:= -std=c++11 -Wall -ggdb
+LDFLAGS         := -Wall -ggdb -lrt
 
 all: ${TARGET}
 
 ${TARGET}: ${OBJS}
-	${CXX} ${CXXFLAGS} -o $@ $^
+	${CXX} ${LDFLAGS} -o $@ $^
 
 ${ODIR}/%.o: %.cpp $(DEPS) $(ODIR)
 	${CXX} ${CXXFLAGS} -c -o $@ $<
