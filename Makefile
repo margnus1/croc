@@ -9,18 +9,19 @@ TARGET  	:= croco
 DEPS		:= ToString.h CrocGame.h Crawler.h
 SRCS    	:= ToString.cpp CrocGame.cpp main.cpp ${CRAWLER}
 ODIR		:= obj
-_OBJS		:= ${SRCS:.cpp=.o} 
+_OBJS		:= ${SRCS:.cpp=.o}
 OBJS		:= $(patsubst %,$(ODIR)/%,$(_OBJS))
 TMPS		:= *~ \#*\#
-CXX		:= clang++
+CXX	        := g++
+CXXFLAGS := -std=c++11 -Wall -ggdb
 
 all: ${TARGET}
 
 ${TARGET}: ${OBJS}
-	${CXX} -o $@ $^
+	${CXX} ${CXXFLAGS} -o $@ $^
 
 ${ODIR}/%.o: %.cpp $(DEPS) $(ODIR)
-	${CXX} -c -o $@ $<
+	${CXX} ${CXXFLAGS} -c -o $@ $<
 
 $(ODIR):
 	mkdir -p $(ODIR)
