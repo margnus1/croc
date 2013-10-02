@@ -119,6 +119,7 @@ CrocSession::CrocSession(const std::wstring& GroupName, bool &OK) {
   graph[34].push_back(16); graph[34].push_back(20); graph[34].push_back(22); graph[34].push_back(24); graph[34].push_back(34);
 
   Group = GroupName;
+  Game = nullptr;
   OK = true;
 };
 

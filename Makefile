@@ -3,7 +3,7 @@ SRCS     := CrocGame.cpp Crawler.cpp main.cpp
 OBJS     := ${SRCS:.cpp=.o}
 
 CXX	 := g++
-CXXFLAGS := -std=c++11
+CXXFLAGS := -std=c++11 -Wall -ggdb
 
 all: ${TARGET}
 
