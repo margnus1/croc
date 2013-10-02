@@ -2,6 +2,7 @@
 #include <cassert>
 #include <random>
 #include <chrono>
+#include <iostream>
 
 class http_pImple {};
 
@@ -28,16 +29,26 @@ public:
       waterholes[n].salinityDistribution   = std::normal_distribution<double>(mean(generator), deviation(generator));
       waterholes[n].alkalinityDistribution = std::normal_distribution<double>(mean(generator), deviation(generator));
     }
+
+    std::uniform_int_distribution<int> startPos(1, GRAPH_SIZE);
+    playerLocation      = startPos(generator);
+    crocLocation        = startPos(generator);
+    backpacker1Activity = startPos(generator);
+    backpacker2Activity = startPos(generator);
+    if (backpacker1Activity == crocLocation) backpacker1Activity = -backpacker1Activity;
+    if (backpacker2Activity == crocLocation) backpacker2Activity = -backpacker2Activity;
+    updateReadings();
   }
 
-  void updateReadings () {
+  void updateReadings() {
     calciumReading    = waterholes[crocLocation-1].calciumDistribution(generator);
     salinityReading   = waterholes[crocLocation-1].salinityDistribution(generator);
     alkalinityReading = waterholes[crocLocation-1].alkalinityDistribution(generator);
   }
 
-  void randomWalk (int &entity_position) {
-    std::uniform_int_distribution<int> dist(0, graph[entity_position - 1].size());
+  void randomWalk(int &entity_position) {
+    assert(entity_position > 0 && entity_position <= GRAPH_SIZE);
+    std::uniform_int_distribution<int> dist(0, graph[entity_position - 1].size() - 1);
     entity_position = graph[entity_position - 1][dist(generator)];
   }
 
@@ -46,10 +57,13 @@ public:
       if (playerLocation == crocLocation) finished = true;
     } else {
       int neighbor = std::stoi(move);
+      assert(neighbor > 0 && neighbor <= GRAPH_SIZE);
       bool isNeighbor = false;
       for (int i = 0; i < int(graph[playerLocation - 1].size()); i++)
         if (graph[playerLocation - 1][i] == neighbor) isNeighbor = true;
       if (isNeighbor) playerLocation = neighbor;
+      else std::cerr << "Warning: Ignoring attempted move from " << playerLocation
+                     << " to " << neighbor << std::endl;
     }
   }
 
@@ -73,7 +87,7 @@ public:
 
   std::vector<Waterhole> waterholes;
 
-  bool finished;
+  bool finished = false;
   int crocLocation;
   int playerLocation;
   int backpacker1Activity, backpacker2Activity;
@@ -146,6 +160,7 @@ void CrocSession::StartGame () {
   assert(Game == nullptr || Game->finished);
   if (Game != nullptr) delete Game;
   Game = new CrocGame();
+  score = 0;
 };
 
 //  Get Paths
@@ -165,7 +180,12 @@ const std::vector<std::vector<int> >& CrocSession::getPaths () const {
 bool CrocSession::makeMove (const std::wstring& playerMove,
                             const std::wstring& playerMove2,
                             int& outScore) {
-  return false;
+  assert(Game != nullptr);
+  Game->playerMove(playerMove);
+  Game->playerMove(playerMove2);
+  Game->tick();
+  outScore = ++score;
+  return !Game->finished;
 };
 
 //  Get the current game state

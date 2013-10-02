@@ -13,7 +13,7 @@ _OBJS		:= ${SRCS:.cpp=.o}
 OBJS		:= $(patsubst %,$(ODIR)/%,$(_OBJS))
 TMPS		:= *~ \#*\#
 CXX	        := g++
-CXXFLAGS := -std=c++11 -Wall -ggdb
+CXXFLAGS    := -std=c++11 -Wall -ggdb
 
 all: ${TARGET}
 
@@ -30,3 +30,7 @@ $(ODIR):
 
 clean:
 	rm -rfv $(ODIR)/*.o ${TARGET} $(TMPS)
+
+# For flymake; use M-x flymake-mode in EMACS for on-the-fly compilation
+check-syntax:
+	${CXX} ${CXXFLAGS} -fsyntax-only ${CHK_SOURCES}
