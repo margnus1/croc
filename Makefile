@@ -7,7 +7,7 @@ CRAWLER 	:= Crawler.cpp
 
 TARGET  	:= croco
 DEPS		:= ToString.h CrocGame.h Crawler.h
-SRCS    	:= ToString.cpp CrocGame.cpp main.cpp ${CRAWLER}
+SRCS    	:= ToString.cpp CrocGame.cpp main.cpp ${CRAWLER} ProgressBar.cpp
 ODIR		:= obj
 _OBJS		:= ${SRCS:.cpp=.o}
 OBJS		:= $(patsubst %,$(ODIR)/%,$(_OBJS))
