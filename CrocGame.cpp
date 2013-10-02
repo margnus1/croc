@@ -3,6 +3,8 @@
 #include <random>
 #include <iostream>
 #include <time.h>
+#include <sstream>
+#include <iomanip>
 
 class http_pImple {};
 
@@ -143,6 +145,8 @@ CrocSession::CrocSession(const std::wstring& GroupName, bool &OK) {
 
   Group = GroupName;
   Game = nullptr;
+  score = 0;
+  total = 0;
   OK = true;
 };
 
@@ -166,16 +170,30 @@ void CrocSession::ClearRecord() {
 
 //  Submit session statistics to the server
 //  -   Requires that you have played at least 100 games.
-void CrocSession::PostResults() const {};
+void CrocSession::PostResults() const {
+  if (total < 100) {
+    std::cerr << "Warning: Ignoring PostResults of less than 100 games" << std::endl;
+    return;
+  }
+
+  sleep(1); // Simulate HTTP
+  return; // Probably shouldn't
+  std::string g(Group.begin(), Group.end());
+  std::stringstream curlline;
+  curlline << "curl -A \"http_pImple/1.0\" -d \"Task=WCScore&Group=" << g << "&Score="
+           << std::setprecision(4) << getAverage() << "\" "
+           << "\"http://www.inatas.com/automated/default.php\"";
+  std::cout << curlline.str() << std::endl;
+  // Really probably shouldn't
+  //assert(system(curlline.str().c_str()) == 0);
+};
 
 //  Start a game
 //  -   The previous game must have finished
 void CrocSession::StartGame () {
   assert(Game == nullptr || Game->finished);
   if (Game != nullptr) delete Game;
-  else { score = 0; total = 0; }
   Game = new CrocGame();
-  total++;
 };
 
 //  Get Paths
@@ -201,7 +219,10 @@ bool CrocSession::makeMove (const std::wstring& playerMove,
   Game->playerMove(playerMove2);
   Game->tick();
   outScore = Game->score;
-  if (Game->finished) score += Game->score;
+  if (Game->finished) {
+    score += Game->score;
+    total++;
+  }
   return !Game->finished;
 };
 
