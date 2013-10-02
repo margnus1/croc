@@ -180,7 +180,7 @@ void CrocSession::PostResults() const {
   return; // Probably shouldn't
   std::string g(Group.begin(), Group.end());
   std::stringstream curlline;
-  curlline << "curl -A \"http_pImple/1.0\" -d \"Task=WCScore&Group=" << g << "&Score="
+  curlline << "curl -d \"Task=WCScore&Group=" << g << "/Linux&Score="
            << std::setprecision(4) << getAverage() << "\" "
            << "\"http://www.inatas.com/automated/default.php\"";
   std::cout << curlline.str() << std::endl;
