@@ -13,7 +13,7 @@ _OBJS		:= ${SRCS:.cpp=.o}
 OBJS		:= $(patsubst %,$(ODIR)/%,$(_OBJS))
 TMPS		:= *~ \#*\#
 CXX	        := g++
-CXXFLAGS    := -std=c++11 -Wall -ggdb
+CXXFLAGS    	:= -std=c++11 -Wall -ggdb
 
 all: ${TARGET}
 
