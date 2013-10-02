@@ -5,23 +5,27 @@
 
 void Crawler::play()
 {
-  int intdummies[10];
-  double ddummies[10];
+  int score;
   int playerLocation;
-  int mpLocation;
-
-  const int numberOfGames = 100;
+  int backpacker1Activity;
+  int backpacker2Activity;
+  double calcium;
+  double saline;
+  double alkalinity;
 
   std::wstring action1;
   std::wstring action2;
+
+  int mpLocation;
 
   const std::vector<std::vector<int> >& paths = server->getPaths();
 
       server->StartGame();
       do {
-	server->GetGameState(intdummies[0], playerLocation, 
-			     intdummies[1], intdummies[2], ddummies[0], 
-			     ddummies[1], ddummies[2]);
+        server->GetGameState(score, playerLocation,
+                             backpacker1Activity, backpacker2Activity,
+                             calcium, saline, alkalinity);
+
         mpLocation = 0; /* mplFinder()  */
         int size=paths[playerLocation].size();
         if(playerLocation = mpLocation)

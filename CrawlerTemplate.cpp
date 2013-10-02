@@ -24,13 +24,8 @@ void Crawler::play()
 	server->GetGameState(score, playerLocation, 
 			     backpacker1Activity, backpacker2Activity, 
 			     calcium, saline, alkalinity);
-	if(rand()%2)
-	  action1='S';
-	else
-	  {
-	    int size=paths[playerLocation-1].size();
-	    action1 = ToString((long long)paths[playerLocation-1][rand()%size]);
-	  }
-	action2='S';
+
+	// Code
+
       } while(server->makeMove(action1, action2, finalScore));
 }
