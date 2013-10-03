@@ -8,8 +8,9 @@ typedef vector<double> ProbList;
 
 
 
-void calc(const Graph G, const ProbList oldList, ProbList &list)
+void calc(const Graph &G, const ProbList &oldList, ProbList &list)
 {
+  assert(&oldList != &list);
   //  cout << oldList.size() << " " << list.size() << endl;
   for(int i=0; i<G.size(); i++)
     {

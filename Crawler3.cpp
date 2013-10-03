@@ -8,6 +8,19 @@
 
 using namespace std;
 
+namespace {
+  void reactToBackpacker(vector<double> &probs, int bpactivity) {
+    if(bpactivity<0)
+      {
+	for(int i=0; i<int(probs.size()); i++)
+	  probs[i]=0.0;
+	probs[-bpactivity-1]=1.0;
+      }
+    else if(bpactivity>0)
+      probs[bpactivity-1]=0;
+  }
+}
+
 void Crawler::play()
 {
   int score;
@@ -24,10 +37,7 @@ void Crawler::play()
   const vector<vector<int> >& paths = server->getPaths();
   const int noNodes = paths.size();
 
-  vector<double> probs; // probs[x] is the probability that the croc is in node x+1
-
-  for(int i=0; i<noNodes; i++)
-    probs.push_back(1.0/noNodes);
+  vector<double> probs(noNodes, 1.0/noNodes); // probs[x] is the probability that the croc is in node x+1
 
   server->StartGame();
   do {
@@ -35,40 +45,23 @@ void Crawler::play()
 			 backpacker1Activity, backpacker2Activity, 
 			 calcium, saline, alkalinity);
 	
-    vector<int> localPaths;
-    localPaths = paths[playerLocation-1];
+    vector<int> localPaths = paths[playerLocation-1];
 
-    if(backpacker1Activity<0)
-      {
-	for(int i=0; i<noNodes; i++)
-	  probs[i]=0.0;
-	probs[-1-backpacker1Activity]=1.0;
-      }
-    else if(backpacker1Activity>0)
-      probs[backpacker1Activity-1]=0;
-
-    if(backpacker2Activity<0)
-      {
-	for(int i=0; i<noNodes; i++)
-	  probs[i]=0.0;
-	probs[-1-backpacker2Activity]=1.0; 
-      }
-    else if(backpacker2Activity>0)
-      probs[backpacker2Activity-1]=0;
+    reactToBackpacker(probs, backpacker1Activity);
+    reactToBackpacker(probs, backpacker2Activity);
 
     ProbList old = probs;
     calc(paths, old, probs);
 
-
-
-
-    auto maxProbNode = max_element(begin(localPaths), localPaths.end(), [&](int m, int n){return probs[m]<probs[n];});
+    auto maxProbNode = max_element(begin(localPaths), localPaths.end(),
+                                   [&](int m, int n){return probs[m-1]<probs[n-1];});
     int secondmax = *maxProbNode;
-    localPaths.push_back(playerLocation-1);
-    maxProbNode = max_element(begin(localPaths), localPaths.end(), [&](int m, int n){return probs[m]<probs[n];});
+    localPaths.push_back(playerLocation);
+    maxProbNode = max_element(begin(localPaths), localPaths.end(),
+                              [&](int m, int n){return probs[m-1]<probs[n-1];});
     int max = *maxProbNode;
 	
-    if(max == playerLocation && probs[max] >0.0)
+    if(max == playerLocation && probs[max-1] >0.0)
       {
 	action1='S';
 	action2=ToString(secondmax);
