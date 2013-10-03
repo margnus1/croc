@@ -13,7 +13,7 @@ void calc(const Graph &G, const ProbList &oldList, ProbList &list)
 {
   assert(&oldList != &list);
   //  cout << oldList.size() << " " << list.size() << endl;
-  for(int i=0; i<G.size(); i++)
+  for(int i=0; i<int(G.size()); i++)
     {
       const int n = G[i].size();
       list[i]=oldList[i]/(n+1);

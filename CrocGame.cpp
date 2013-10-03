@@ -177,7 +177,7 @@ void CrocSession::PostResults() const {
     return;
   }
 
-  sleep(1); // Simulate HTTP
+  // sleep(1); // Simulate HTTP
   return; // Probably shouldn't
   std::string g(Group.begin(), Group.end());
   std::stringstream curlline;
