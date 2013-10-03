@@ -10,11 +10,13 @@ Dijkstra::Dijkstra(const std::vector<std::vector<int> > &graph) :
     queue.push(origin);
     while (!queue.empty()) {
       int node = queue.front(); queue.pop();
-      for (int neighbor : graph[node])
+      for (auto nit = graph[node].begin(); nit != graph[node].end(); ++nit) {
+        int neighbor = *nit;
         if (next(origin, neighbor) == 0) {
           next(origin, neighbor) = node;
           queue.push(neighbor);
         }
+      }
     }
   }
 };
@@ -24,5 +26,5 @@ Dijkstra::byte &Dijkstra::next(int from, int to) {
 };
 
 int Dijkstra::next(int from, int to) const {
-  return next(from, to);
+  return parents[(from-1) * size + (to-1)];
 };
