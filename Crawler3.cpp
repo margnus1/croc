@@ -8,10 +8,6 @@
 
 using namespace std;
 
-//void fix(double &p) { int d = p-0.5; p=p-d/10.0;};
-void fix(double &p) { if (p<0.5) p+=0.1; else if (p>0.5) p-=0.1;};
-void pr(double p) { cout << p << endl; }
-
 void Crawler::play()
 {
   int score;
@@ -79,21 +75,24 @@ void Crawler::play()
       }
     else 
       {
-	int size = paths[playerLocation-1].size();
-	int newnode = (long long)localPaths[rand()%size];
-	action1 = ToString(newnode);
-	//	      action1=ToString(max);
-	//	auto mrobNode = max_element(begin(paths[max-1]), paths[max-1].end(), [&](int m, int n){return probs[m]<probs[n];});
-	//	int thirdmax = *mrobNode;
+	//	int size = paths[playerLocation-1].size();
+	//	int newnode = (long long)localPaths[rand()%size];
+	//	action1 = ToString(newnode);
+	action1=ToString(max);
+	action2='S';
+	/*	if(probs[max]<0.02){
+		auto mrobNode = max_element(begin(paths[max-1]), paths[max-1].end(), [&](int m, int n){return probs[m]<probs[n];});
+		int thirdmax = *mrobNode;
+		action2=ToString(thirdmax);
+		}*/
 	//			if(probs[newnode-1]>0.2)
-	if(probs[newnode]>0.0) 
-	  action2='S';
-	else{
+			      //	if(probs[newnode
+	  /*	else{
 	  size = paths[newnode-1].size();
 
 	  newnode = (long long)paths[newnode-1][rand()%size];
 	  action2 = ToString(newnode);
-	}
+	  } */
       }
 
     if(action1[0] == 'S')
