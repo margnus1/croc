@@ -8,20 +8,6 @@
 
 using namespace std;
 typedef vector<double> ProbList;
-
-namespace {
-  void reactToBackpacker(vector<double> &probs, int bpactivity) {
-    if(bpactivity<0)
-      {
-	for(int i=0; i<int(probs.size()); i++)
-	  probs[i]=0.0;
-	probs[-bpactivity-1]=1.0;
-      }
-    else if(bpactivity>0)
-      probs[bpactivity-1]=0;
-  }
-}
-
 void Crawler::play()
 {
   int score;
@@ -49,9 +35,6 @@ void Crawler::play()
 	
     vector<int> localPaths = paths[playerLocation-1];
 
-    reactToBackpacker(probs, backpacker1Activity);
-    reactToBackpacker(probs, backpacker2Activity);
-
     ProbList old = probs;
     markov.forward(old, probs);
     markov.considerWaterValues(probs, calcium, saline, alkalinity);
@@ -67,37 +50,35 @@ void Crawler::play()
                               [&](int m, int n){return probs[m-1]<probs[n-1];});
                               int max = *maxProbNode; */
 
-    int maximum = 0;
+    int maximum = 1;
     double temp = probs[0];
     for (int i=0; i<probs.size(); i++) 
       if(temp<probs[i])
         {
           temp = probs[i];
-          maximum = i;
+          maximum = i + 1;
         }
 
-  if(maximum == playerLocation)
-    {
-      action1='S';
-	action2=ToString(dijkstra.next(playerLocation,maximum));
+    if(maximum == playerLocation)
+      {
+	action1='S';
+	probs[playerLocation-1]=0.0;
+	action2=ToString(dijkstra.next(playerLocation, maximum));
         // step to next node towards maximum using dijkstra
       }
     else 
       {
-        int next = dijkstra.next(playerLocation,maximum);
-          action1=ToString(next); // walk towards maximum
-        if (probs[next] > 0.69)
-          // if there is 70% chance that cros is here(where we walked with action1) we test search
+        int next = dijkstra.next(playerLocation, maximum);
+	action1=ToString(next); // walk towards maximum
+	if (probs[next-1] > 0.02) {
+          // if there is 3% chance that cros is here(where we walked with action1) we test search
           action2='S';
+	  probs[next-1]=0.0;
+	  
+	}
         else
-          action2=ToString(dijkstra.next(next,maximum)); // walk a second time towards maximum
-	
+          action2=ToString(dijkstra.next(next, maximum)); // walk a second time towards maximum
       }
-  
-    if(action1[0] == 'S')
-      probs[playerLocation-1]=0.0;
-    if(action2[0] == 'S')
-      probs[stoi(action1)-1]=0.0;
 
   } while(server->makeMove(action1, action2, finalScore));
 }
