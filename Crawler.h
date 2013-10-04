@@ -3,7 +3,7 @@
 #include "CrocGame.h"
 #include <time.h>
 #include <stdlib.h>
-#include <dijkstra.h>
+#include "dijkstra.h"
 
 class Crawler
 {
@@ -19,7 +19,7 @@ class Crawler
 
  protected:
   CrocSession *server;
-  Dijkstra dijkstra;
+  const Dijkstra dijkstra;
 };
 
 #endif

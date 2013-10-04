@@ -4,9 +4,10 @@
 #include <iostream>
 #include "ToString.h"
 #include <algorithm>
-#include "Calc.cpp"
+#include "markov.h"
 
 using namespace std;
+typedef vector<double> ProbList;
 
 namespace {
   void reactToBackpacker(vector<double> &probs, int bpactivity) {
@@ -40,6 +41,7 @@ void Crawler::play()
   vector<double> probs(noNodes, 1.0/noNodes); // probs[x] is the probability that the croc is in node x+1
 
   server->StartGame();
+  Markov markov(*server);
   do {
     server->GetGameState(score, playerLocation, 
 			 backpacker1Activity, backpacker2Activity, 
@@ -51,7 +53,11 @@ void Crawler::play()
     reactToBackpacker(probs, backpacker2Activity);
 
     ProbList old = probs;
-    calc(paths, old, probs);
+    markov.forward(old, probs);
+    markov.considerWaterValues(probs, calcium, saline, alkalinity);
+    markov.considerBackpacker(probs, backpacker1Activity);
+    markov.considerBackpacker(probs, backpacker2Activity);
+    markov.normalize(probs);
 
     /*    auto maxProbNode = max_element(begin(localPaths), localPaths.end(),
                                    [&](int m, int n){return probs[m-1]<probs[n-1];});
@@ -78,16 +84,16 @@ void Crawler::play()
       }
     else 
       {
-        int next = dijkstra.next(playerLocation,maximum)
+        int next = dijkstra.next(playerLocation,maximum);
           action1=ToString(next); // walk towards maximum
-        if (probs(next) > 0.69)
+        if (probs[next] > 0.69)
           // if there is 70% chance that cros is here(where we walked with action1) we test search
           action2='S';
         else
-          action2=ToString(dijkstra.next(next,maximum)) // walk a second time towards maximum
+          action2=ToString(dijkstra.next(next,maximum)); // walk a second time towards maximum
 	
-            }
-
+      }
+  
     if(action1[0] == 'S')
       probs[playerLocation-1]=0.0;
     if(action2[0] == 'S')
