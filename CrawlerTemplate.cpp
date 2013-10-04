@@ -1,31 +1,32 @@
-#include "Crawler.h"
+#include "Crawlernew.h"
 #include <vector>
 #include <string>
 #include <iostream>
 #include "ToString.h"
 
-void Crawler::play()
+void _Crawler::play()
 {
-  int score;
-  int playerLocation;
-  int backpacker1Activity;
-  int backpacker2Activity;
-  double calcium;
-  double saline;
-  double alkalinity;
-
-  std::wstring action1;
-  std::wstring action2;
-
   const std::vector<std::vector<int> >& paths = server->getPaths();
 
       server->StartGame();
       do {
-	server->GetGameState(score, playerLocation, 
-			     backpacker1Activity, backpacker2Activity, 
-			     calcium, saline, alkalinity);
-
-	// Code
-
+	  getData();
+	  backPackers();
+	  water();
+	  calcNewProbs();
+	  choseActions();
+	  update();
       } while(server->makeMove(action1, action2, finalScore));
+}
+
+void _Crawler::getData()
+{
+  server->GetGameState(score, playerLocation, 
+		      backpacker1Activity, backpacker2Activity, 
+		      calcium, saline, alkalinity);
+}
+
+void _Crawler::choseActions()
+{
+  // Code
 }
