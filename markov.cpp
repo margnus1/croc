@@ -39,8 +39,12 @@ void Markov::forward(const ProbList &oldList, ProbList &list)
 
             list[i]+=op/(m+1);
             //	  cout << "list[i]: " << list[i] << endl;
+	    assert(list[i]>=0.0 && list[i]<=1.0);
           }
       }
+    double sum = 0.0;
+    for (int i = 0; i < int(list.size()); i++) sum += list[i];
+    assert(abs(1.0 - sum) < 0.000001);
   }
 
 void Markov::normalize(ProbList &list) {
