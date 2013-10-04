@@ -3,19 +3,23 @@
 #include "CrocGame.h"
 #include <time.h>
 #include <stdlib.h>
+#include <dijkstra.h>
 
 class Crawler
 {
  public:
   int finalScore;
 
-  Crawler (CrocSession *crocSession) : server (crocSession) {
+  Crawler (CrocSession *crocSession)
+    : server (crocSession),
+    dijkstra(server->getPaths()) {
     srand(time(NULL));
   }
   void play();
 
- private:
+ protected:
   CrocSession *server;
+  Dijkstra dijkstra;
 };
 
 #endif
