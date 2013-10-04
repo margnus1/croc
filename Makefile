@@ -7,9 +7,9 @@ CRAWLER 	:= Crawler.cpp
 
 TARGET  	:= croco
 DEPS		:= ToString.h CrocGame.h Crawler.h dijkstra.h \
-                   console.h
+                   console.h markov.h
 SRCS    	:= ToString.cpp CrocGame.cpp main.cpp ${CRAWLER} \
-                   ProgressBar.cpp dijkstra.cpp console.cpp
+                   ProgressBar.cpp dijkstra.cpp console.cpp markov.cpp
 ODIR		:= obj
 _OBJS		:= ${SRCS:.cpp=.o}
 OBJS		:= $(patsubst %,$(ODIR)/%,$(_OBJS))

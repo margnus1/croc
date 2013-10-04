@@ -58,5 +58,3 @@ int main(int argc, char *argv[]) {
     s.ClearRecord();
   } while (argc > 1 && strcmp(argv[1], "--forever") == 0);
 }
-
-

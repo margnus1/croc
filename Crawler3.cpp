@@ -4,22 +4,12 @@
 #include <iostream>
 #include "ToString.h"
 #include <algorithm>
-#include "Calc.cpp"
+#include "markov.h"
 
 using namespace std;
+typedef vector<vector<int> > Graph;
+typedef vector<double> ProbList;
 
-namespace {
-  void reactToBackpacker(vector<double> &probs, int bpactivity) {
-    if(bpactivity<0)
-      {
-	for(int i=0; i<int(probs.size()); i++)
-	  probs[i]=0.0;
-	probs[-bpactivity-1]=1.0;
-      }
-    else if(bpactivity>0)
-      probs[bpactivity-1]=0;
-  }
-}
 
 void Crawler::play()
 {
@@ -40,6 +30,7 @@ void Crawler::play()
   vector<double> probs(noNodes, 1.0/noNodes); // probs[x] is the probability that the croc is in node x+1
 
   server->StartGame();
+  Markov markov(*server);
   do {
     server->GetGameState(score, playerLocation, 
 			 backpacker1Activity, backpacker2Activity, 
@@ -47,11 +38,12 @@ void Crawler::play()
 	
     vector<int> localPaths = paths[playerLocation-1];
 
-    reactToBackpacker(probs, backpacker1Activity);
-    reactToBackpacker(probs, backpacker2Activity);
-
     ProbList old = probs;
-    calc(paths, old, probs);
+    markov.forward(old, probs);
+    markov.considerWaterValues(probs, calcium, saline, alkalinity);
+    markov.considerBackpacker(probs, backpacker1Activity);
+    markov.considerBackpacker(probs, backpacker2Activity);
+    markov.normalize(probs);
 
     auto maxProbNode = max_element(begin(localPaths), localPaths.end(),
                                    [&](int m, int n){return probs[m-1]<probs[n-1];});
