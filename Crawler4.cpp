@@ -95,12 +95,106 @@ void Crawler::play()
       {
 	action1='S';
 	probs[playerLocation-1]=0.0;
-	action2=ToString(dijkstra.next(playerLocation, maximum));
-        // step to next node towards maximum using dijkstra
+	maximum = 1;
+	temp=0;
+	// Calculate new maximum
+	for (int i=0; i<probs.size(); i++) 
+	  if(temp<probs[i])
+	    {
+	      temp = probs[i];
+	      maximum = i + 1;
+	    }
+
+	int next = dijkstra.next(playerLocation, maximum);
+	// Tiebreak
+	if(next!=maximum)
+	  {
+	    int next2 = dijkstra.next(next, maximum);
+	    vector<int> commonNeighbours;
+	    vector<int> plLoc = paths[playerLocation-1];
+	    vector<int> nxt = paths[next2-1];
+	    for(int i=0; i< plLoc.size(); i++)
+	      for(int j=0; j<nxt.size(); j++)
+		if(plLoc[i]==nxt[j])
+		  commonNeighbours.push_back(plLoc[i]);
+
+	    temp = 0;
+	    next2 = commonNeighbours[0];
+	    // Tiebreak number of paths first
+	    /*	    for(int i=0; i<commonNeighbours.size(); i++)
+	      {
+		if(paths[commonNeighbours[i]-1].size()>temp || 
+		   (paths[commonNeighbours[i]-1].size()==temp &&
+		    probs[commonNeighbours[i]-1] > probs[next2-1]))
+		  {
+		    temp = paths[commonNeighbours[i]-1].size();
+		    next2 = commonNeighbours[i];
+		  } 
+		  } */
+
+	    // Tiebreak probability first
+	    for(int i=0; i<commonNeighbours.size(); i++)
+	      {
+		if(paths[commonNeighbours[i]-1].size()>temp || 
+		   (paths[commonNeighbours[i]-1].size()==temp &&
+		    probs[commonNeighbours[i]-1] > probs[next2-1]))
+		  {
+		    temp = paths[commonNeighbours[i]-1].size();
+		    next2 = commonNeighbours[i];
+		  } 
+	      }
+	    //	    cout << next << " " << next2 << endl; 
+	    	    next = next2;
+	  } 
+	action2=ToString(next);
       }
     else 
       {
         int next = dijkstra.next(playerLocation, maximum);
+
+	// Tiebreak
+	if(next!=maximum)
+	  {
+	    int next2 = dijkstra.next(next, maximum);
+	    vector<int> commonNeighbours;
+	    vector<int> plLoc = paths[playerLocation-1];
+	    vector<int> nxt = paths[next2-1];
+	    for(int i=0; i< plLoc.size(); i++)
+	      for(int j=0; j<nxt.size(); j++)
+		if(plLoc[i]==nxt[j])
+		  commonNeighbours.push_back(plLoc[i]);
+
+	    temp = 0;
+	    double dtemp = 0;
+	    next2 = commonNeighbours[0];
+
+	    // Tiebreak number of paths first
+	    for(int i=0; i<commonNeighbours.size(); i++)
+	      {
+		if(paths[commonNeighbours[i]-1].size()>temp || 
+		   (paths[commonNeighbours[i]-1].size()==temp &&
+		    probs[commonNeighbours[i]-1] > probs[next2-1]))
+		  {
+		    temp = paths[commonNeighbours[i]-1].size();
+		    next2 = commonNeighbours[i];
+		  } 
+	      }
+
+	    // Tiebreak probability first
+	    /*	    for(int i=0; i<commonNeighbours.size(); i++)
+	      {
+		if(probs[commonNeighbours[i]-1] > dtemp ||
+                   (probs[commonNeighbours[i]-1] == dtemp &&
+                    paths[commonNeighbours[i]-1].size() > paths[next2-1].size()))
+		  {
+		    dtemp = probs[commonNeighbours[i]-1];
+		    next2 = commonNeighbours[i];
+		  } 
+		  } */
+	    //	    cout << next << " " << next2 << endl; 
+	    	    next = next2;
+	    } 
+
 	action1=ToString(next); // walk towards maximum
 	if (probs[next-1] > 0.02) {
           // if there is 2% chance that cros is here(where we walked with action1) we test search
@@ -108,9 +202,46 @@ void Crawler::play()
 	  probs[next-1]=0.0;
 	  
 	}
-        else
-          action2=ToString(dijkstra.next(next, maximum)); // walk a second time towards maximum
-      }
+        else 
+	  {
+	    
+          next = dijkstra.next(next, maximum); // walk a second time towards maximum
+	  
+	  // This tiebreaker segfaults during dijkstras for some fucked up reason
+	  /*  if(next!=maximum)
+	    {
+	      int next2 = dijkstra.next(next, maximum);
+	      vector<int> commonNeighbours;
+	      vector<int> plLoc = paths[playerLocation-1];
+	      vector<int> nxt = paths[next2-1];
+	      for(int i=0; i< plLoc.size(); i++)
+		for(int j=0; j<nxt.size(); j++)
+		  if(plLoc[i]==nxt[j])
+		    commonNeighbours.push_back(plLoc[i]);
+	      temp = 0;
+	      next2 = commonNeighbours[0];
+	      for(int i=0; i<commonNeighbours.size(); i++)
+		{
+		  if(paths[commonNeighbours[i]-1].size()>temp || 
+		     (paths[commonNeighbours[i]-1].size()==temp &&
+		      probs[commonNeighbours[i]-1] > probs[next2-1]))
+		    {
+		      temp = paths[commonNeighbours[i]-1].size();
+		      next2 = commonNeighbours[i];
+		    } 
+		}
 
-  } while(server->makeMove(action1, action2, finalScore));
-}
+		// Tiebreak probability first                                                                                                            double dtemp = 0;
+		/*      for(int i=0; i<commonNeighbours.size(); i++)                                                                                     
+              {                                                                                                                                                     if(probs[commonNeighbours[i]-1] > dtemp ||                                                                                                             (probs[commonNeighbours[i]-1] == dtemp &&                                                                                                             paths[commonNeighbours[i]-1].size() > paths[next2-1].size()))                                                                                     {                                                                                                                                  
+                  dtemp = probs[commonNeighbours[i]-1];                                                                                            
+                    next2 = commonNeighbours[i];                                                                                                     
+               }                                                                                                                                  
+	      //	    cout << next << " " << next2 << endl; 
+	      	    next = next2;
+		    } */
+	  action2=ToString(next);
+	  }
+      }
+      } while(server->makeMove(action1, action2, finalScore));
+  }
