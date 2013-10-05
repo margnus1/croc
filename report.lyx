@@ -1,0 +1,426 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Where's Croc
+\begin_inset Newline newline
+\end_inset
+
+Report for Lab 2, Group 4
+\begin_inset Newline newline
+\end_inset
+
+Artificial Intelligence (course 1DL340)
+\begin_inset Newline newline
+\end_inset
+
+Uppsala University - Autumn 2013
+\end_layout
+
+\begin_layout Author
+Patrik Broman 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+and
+\end_layout
+
+\end_inset
+
+ Magnus Lång 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+and
+\end_layout
+
+\end_inset
+
+ Rickard Lööf
+\end_layout
+
+\begin_layout Section
+Problem Description
+\end_layout
+
+\begin_layout Standard
+A crocodile with a GPS and sensors for three different water conditions.
+ The crocodile walks around randomly among a number of water holes with
+ known distributions of their conditions.
+ However, the GPS is broken.
+ The task is to find the crocodile as fast as possible in terms of number
+ of moves.
+ There are also two backpackers wandering around randomly, both of them
+ having a working GPS.
+ If either one of them end up at the same water hole as the crocodile they
+ will be eaten.
+ If this happends, the position and time for the event will be known.
+ For some reason the crocodile seems to hide from us but instantly eats
+ the backpackers.
+ Since a crocodile is basically a killing machine with a brain that has
+ just enough room for some instincs, it's reasonable to assume that we are
+ Hippos.
+\end_layout
+
+\begin_layout Standard
+More formaly, the problem is a search problem.
+ The water holes can be described as a directed graph G.
+ The crocodile and backpackers moves randomly once each timestep, and at
+ each timestep we get information of water conditions for the water hole
+ the crocodile is currently at and the backpackers position and wether they
+ are getting eaten.
+ There are two different actions available: move and search, and we also
+ perform two actions each timestep.
+ The mission is completed when we perform a search while positioned at the
+ same water hole as the crocodile.
+\end_layout
+
+\begin_layout Section
+Algorithms
+\end_layout
+
+\begin_layout Subsection
+Pseudocode
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+init probabilityArray
+\end_layout
+
+\begin_layout Plain Layout
+
+while croc not found:
+\end_layout
+
+\begin_layout Plain Layout
+
+  get sensor info
+\end_layout
+
+\begin_layout Plain Layout
+
+  update probabilityArray with sensor info 
+\end_layout
+
+\begin_layout Plain Layout
+
+  chose two actions two perform
+\end_layout
+
+\begin_layout Plain Layout
+
+  update probabilityArray with action info
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+FIX MEEEEEEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!
+\end_layout
+
+\begin_layout Subsubsection
+Calculation of new probability with the Forward algorithm
+\end_layout
+
+\begin_layout Standard
+An array of probabilities for the crocodile of being at each water hole
+ is used and is updated each iteration using Markov forward of first order.
+ It is also updated each timestep with all information we get from sensors
+ and our own location.
+ Pseudocode for this:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+normalize oldProbability
+\end_layout
+
+\begin_layout Plain Layout
+
+for each node in G:
+\end_layout
+
+\begin_layout Plain Layout
+
+  newProbability[node] = oldProbability[node] / 
+\end_layout
+
+\begin_layout Plain Layout
+
+                         (numberOfNeighbours(node)+1)
+\end_layout
+
+\begin_layout Plain Layout
+
+  for each neighbour to node:
+\end_layout
+
+\begin_layout Plain Layout
+
+    newProbability[node] += oldProbability[neighbour] / 
+\end_layout
+
+\begin_layout Plain Layout
+
+                      (numberOfNeighbours(neighbour)+1)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+At first the probabilities was not calculated in a correct mathematical
+ manner.
+ The "probabilities" was more of a good/bad measure.
+ The very first implementation just initialized the probabilityArray to
+ 
+\begin_inset Formula $0.5$
+\end_inset
+
+ and during each time step all probabilities below 
+\begin_inset Formula $0.5$
+\end_inset
+
+ was increased by 
+\begin_inset Formula $0.1$
+\end_inset
+
+ and all probabilites above was decreased.
+ This was later improved by only changing non-zero probabilites with non-zero
+ neighbours.
+\end_layout
+
+\begin_layout Subsubsection
+Updating the probability array with information from backpackers
+\end_layout
+
+\begin_layout Standard
+Information from backpackers are very simple to use.
+ Each step 
+\family typewriter
+probabilityArray[locations]
+\family default
+ is set to 
+\begin_inset Formula $0$
+\end_inset
+
+, where locations are the locations for backpackers and the locations we
+ have performed a search.
+ If a backpacker is eaten, 
+\family typewriter
+probabilityArray[backpackerLocation]
+\family default
+ is set to 
+\begin_inset Formula $1$
+\end_inset
+
+ and the rest of 
+\family typewriter
+probabilityArray
+\family default
+ is set to 
+\begin_inset Formula $0$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+In the first implementation the probability array was not zeroed when a
+ backpacker was eaten.
+ Performing the zeroing greatly improved the algorithm.
+\end_layout
+
+\begin_layout Subsubsection
+Updating the probability array with information from sensors
+\end_layout
+
+\begin_layout Standard
+The probability array is updated using the following algorithm.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "mathescape=true"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+for each node in probabilityArray:
+\end_layout
+
+\begin_layout Plain Layout
+
+  for each water condition distribution $
+\backslash
+mu,~ 
+\backslash
+sigma$ in node:
+\end_layout
+
+\begin_layout Plain Layout
+
+    probabilityArray[node] *= $
+\backslash
+phi_{
+\backslash
+mu, 
+\backslash
+sigma}($measurement$)$
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Choosing actions
+\end_layout
+
+\begin_layout Standard
+This is where stuff gets complicated.
+ It seems likely that there is an optimal algorithm, but how it should look
+ like is quite hard to see, since the state is changed randomly, or at least
+ non-deterministicly, each time.
+\end_layout
+
+\begin_layout Standard
+The very first algorithm was not really an algorithm.
+ We simply walked around randomly until the crocodile was found, without
+ taking any information whatsoever into consideration.
+ This so-called algorithm had two purposes.
+ The first purpose is to check if the whole simulation actually works.
+ The second is to have some kind of worst case.
+ Any AI worse than this is to be considered bad.
+ This algorithm found the crocodile in an avarage of 
+\begin_inset Formula $120$
+\end_inset
+
+ moves.
+\end_layout
+
+\begin_layout Standard
+The second algorithm chosen was very simple.
+ It works by simply choosing the local max probability and search there.
+ This works quite well, but it's likely that it won't do for large graphs.
+\end_layout
+
+\begin_layout Standard
+The third algorithm uses Dijkstras algorithm to find a global maximum.
+ We always walks towards the global maximum, and we search along that way
+ if the probability on the water hole we are standing on is high enough.
+ This value was tweaked by trial and error, and the optimal value was surprising
+ly low, only 
+\begin_inset Formula $0.03$
+\end_inset
+
+.
+ Our initial guess was 
+\begin_inset Formula $0.7$
+\end_inset
+
+.
+ One interesting observation is that this value is very close to one divided
+ by number of water holes.
+\end_layout
+
+\begin_layout Subsection
+Further optimisations
+\end_layout
+
+\begin_layout Standard
+Since the probability calculations are mathematically correct, the only
+ way to improve this algorithm is to change the way we chose actions.
+ We only calculate the probabilities for the crocodile to be in a specific
+ water hole, and we only go for the maximum.
+ Maybe it would be wiser to go for maximum clusters.
+\end_layout
+
+\end_body
+\end_document
