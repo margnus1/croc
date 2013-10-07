@@ -1,0 +1,74 @@
+# Generic C++ Makefile
+#
+# Author: Patrik Broman
+#
+# Put all .cpp files in .src/ and all header files in .include/
+
+
+
+# Name your executable.
+TARGET  := a.out
+
+# All .cpp files you want to compile. Leave commented out for all files in .src/
+# Do not include .src/ directory in file names. They are assumed to be there.
+# Example:
+# SRCS	:= main.cpp matrix.cpp
+
+# Nothing below this line needs to be changed if above instructions is followed.
+# Alter stuff at your own risk.
+
+# The different directories. IDIR and ODIR are created automatically.
+SDIR	:= src
+DDIR	:= deps
+IDIR	:= include
+ODIR	:= obj
+
+ifndef SRCS
+	SRCS:=$(patsubst $(SDIR)/%,%,$(wildcard $(SDIR)/*.cpp))
+endif
+
+DEPS	:= $(patsubst %,$(DDIR)/%,$(SRCS:.cpp=.d))
+OBJS	:= $(patsubst %,$(ODIR)/%,$(SRCS:.cpp=.o))
+
+CXX	        := clang++
+CXXFLAGS    	:= -std=c++11 -Wall -ggdb -I $(IDIR)
+LDFLAGS         := -Wall -ggdb -lrt
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CXX) $(LDFLAGS) -o $@ $^
+
+$(OBJS): | $(ODIR)
+
+$(ODIR):
+	mkdir $(ODIR)
+
+$(DEPS): | $(DDIR)
+
+$(DDIR):
+	mkdir $(DDIR)
+
+$(DDIR)/%.d: $(SDIR)/%.cpp
+	@set -e; rm -f $@; \
+	$(CXX) -MM $(CXXFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+	@echo Making dependencies: $@
+
+ifneq ($(MAKECMDGOALS), clean)
+    -include $(DEPS)
+endif
+
+$(ODIR)/%.o: $(SDIR)/%.cpp
+	$(CXX) -c $(CXXFLAGS) $< -o $@ 
+
+
+.PHONY: clean
+
+clean:
+	rm -rfv $(ODIR) $(DDIR) $(TARGET)
+
+# For flymake; use M-x flymake-mode in EMACS for on-the-fly compilation
+check-syntax:
+	$(CXX) $(CXXFLAGS) -fsyntax-only $(CHK_SOURCES)
