@@ -10,5 +10,5 @@ class Dijkstra {
   typedef unsigned char byte;
   byte &next(int to, int from);
   int size;
-  std::vector<std::vector<byte> > parents;
+  std::vector<byte> parents;
 };

@@ -42,9 +42,6 @@ void Markov::forward(const ProbList &oldList, ProbList &list)
 	    assert(list[i]>=0.0 && list[i]<=1.0);
           }
       }
-    double sum = 0.0;
-    for (int i = 0; i < int(list.size()); i++) sum += list[i];
-    assert(abs(1.0 - sum) < 0.000001);
   }
 
 void Markov::normalize(ProbList &list) {
@@ -76,7 +73,7 @@ namespace {
 void Markov::considerWaterValues(ProbList &list, double calcium,
                                  double saline, double alkalinity) {
   for (int i = 0; i < int(list.size()); i++)
-    list[i] *= normalPdf(calciumDist[i],    calcium) *
-               normalPdf(salinityDist[i],   saline)  *
-               normalPdf(alkalinityDist[i], alkalinity);
+    list[i] *= normalPdf((calciumDist)[i],    calcium) *
+               normalPdf((salinityDist)[i],   saline)  *
+               normalPdf((alkalinityDist)[i], alkalinity);
 }

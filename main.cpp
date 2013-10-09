@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
   bool noob = false;
   CrocSession s(L"Group 4", noob);
   const int minNumberOfGames = 20;
-  const int maxNumberOfGames = 400;
+  const int maxNumberOfGames = 200;
   const double faithInLuck = 20.0;
   long long total = 0;
   long long totalSquares = 0;
