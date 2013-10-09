@@ -23,8 +23,10 @@ all: ${TARGET}
 ${TARGET}: ${OBJS}
 	${CXX} ${LDFLAGS} -o $@ $^
 
-${ODIR}/%.o: %.cpp $(DEPS) $(ODIR)
-	${CXX} ${CXXFLAGS} -c -o $@ $<
+$(OBJS): | $(ODIR)
+
+${ODIR}/%.o: %.cpp $(DEPS)
+	${CXX} -c ${CXXFLAGS} $< -o $@ 
 
 $(ODIR):
 	mkdir -p $(ODIR)

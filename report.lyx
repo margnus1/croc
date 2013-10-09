@@ -190,8 +190,7 @@ while croc not found:
 \end_layout
 
 \begin_layout Subsection
-FIX MEEEEEEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!
+Details of each subproblem
 \end_layout
 
 \begin_layout Subsubsection
@@ -397,7 +396,7 @@ The third algorithm uses Dijkstras algorithm to find a global maximum.
  if the probability on the water hole we are standing on is high enough.
  This value was tweaked by trial and error, and the optimal value was surprising
 ly low, only 
-\begin_inset Formula $0.03$
+\begin_inset Formula $0.02$
 \end_inset
 
 .
@@ -406,8 +405,19 @@ ly low, only
 \end_inset
 
 .
- One interesting observation is that this value is very close to one divided
+ One interesting observation is that this value is close to one divided
  by number of water holes.
+ Maybe there's a correlation.
+\end_layout
+
+\begin_layout Standard
+A minor tiebreak tweak helped optimising further, but just a little bit.
+ When using dijkstras we get a shortest road, but there may be several of
+ same length.
+ To tiebreak we chose to go for the node that had highest number of neighbours,
+ thus increasing mobility.
+ In the case they also had the same number of neighbours highest probability
+ was chosen.
 \end_layout
 
 \begin_layout Subsection
@@ -420,6 +430,13 @@ Since the probability calculations are mathematically correct, the only
  We only calculate the probabilities for the crocodile to be in a specific
  water hole, and we only go for the maximum.
  Maybe it would be wiser to go for maximum clusters.
+ This was tried, but with worse worse performance.
+ It's also possible that the tiebreaking could be better.
+\end_layout
+
+\begin_layout Standard
+One way to optimise further would be a brute force.
+ 
 \end_layout
 
 \end_body
