@@ -3,10 +3,13 @@
 #include <vector>
 #include <string>
 
-/* #ifndef CROC_ENGINE_DLL */
-/* #define CROC_ENGINE_DLL __declspec(dllimport) */
-/* #endif */
+#ifdef _WIN32
+#ifndef CROC_ENGINE_DLL
+#define CROC_ENGINE_DLL __declspec(dllimport)
+#endif
+#else
 #define CROC_ENGINE_DLL
+#endif
 
 //	Game Overview:
 //	
