@@ -3,7 +3,7 @@
 #
 # Remember to include "Crawler.h" no matter the name of crawlersrc.
 
-CRAWLER 	:= Crawler.cpp
+CRAWLER 	:= Crawler4.cpp
 
 TARGET  	:= croco
 DEPS		:= ToString.h CrocGame.h Crawler.h dijkstra.h \
