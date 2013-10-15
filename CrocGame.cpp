@@ -26,8 +26,9 @@ public:
   {
     // Fetch as exact time as possible, and use as seed
     timespec time;
-    generator.seed(0);
-    
+    clock_gettime(CLOCK_REALTIME, &time);
+    generator.seed(time.tv_sec ^ time.tv_nsec);
+
     std::uniform_int_distribution<int> mean     (1100, 1200),
                                        deviation(25,   50);
     for (int n = 0; n < int(graph.size()); n++) {
@@ -35,9 +36,7 @@ public:
       waterholes[n].salinityDistribution   = std::normal_distribution<double>(mean(generator), deviation(generator));
       waterholes[n].alkalinityDistribution = std::normal_distribution<double>(mean(generator), deviation(generator));
     }
-    clock_gettime(CLOCK_REALTIME, &time);
-    generator.seed(time.tv_sec ^ time.tv_nsec);
-    
+
     std::uniform_int_distribution<int> startPos(1, GRAPH_SIZE);
     playerLocation      = startPos(generator);
     crocLocation        = startPos(generator);
